@@ -1,0 +1,29 @@
+/*
+  Simple IO Plugin
+  Copyright (c) 2014 Overwolf Ltd.
+*/
+#ifndef UTILS_FILE_H_
+#define UTILS_FILE_H_
+
+#include <string>
+#include <shlobj.h>
+
+namespace utils {
+
+class File {
+public:
+  static std::wstring GetSpecialFolderWide(int csidl);
+  static std::string GetSpecialFolderUtf8(int csidl);
+
+  static bool DoesFileExist(const std::wstring& filename);
+  static bool IsDirectory(const std::wstring& directory);
+
+  static bool GetTextFile(
+    const std::wstring& filename, 
+    std::string& ref_output,
+    int limit);
+}; // class File
+
+}; // namespace utils;
+
+#endif // UTILS_FILE_H_

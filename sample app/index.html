@@ -1,0 +1,113 @@
+<html>
+  <head>
+    <title>Simple IO App Tester</title>
+  </head>
+  <body>
+
+    <embed  id="plugin" 
+            type="application/x-simple-io-plugin" 
+            width=0px 
+            height=0px>
+    </embed>
+    
+    <h1 id="title"></h1>
+    <hr>
+    <div id="messages"></div>
+
+    <script>
+      navigator.plugins.refresh(true);
+
+      function addMessage(message) {
+        var obj = document.createElement("div");
+        obj.innerText = message;
+        document.querySelector('#messages').appendChild(obj);
+      }
+      
+      function plugin() {
+        return document.querySelector('#plugin');
+      }
+      
+      if (plugin() == null) {
+        document.querySelector('#title').innerText = "Plugin couldn't be loaded??";
+        return;
+      } else {
+        document.querySelector('#title').innerText = "Plugin was loaded!";
+      }
+      
+      addMessage("PROGRAMFILES = " + plugin().PROGRAMFILES);
+      addMessage("PROGRAMFILESX86 = " + plugin().PROGRAMFILESX86);
+      addMessage("COMMONFILES = " + plugin().COMMONFILES);
+      addMessage("COMMONFILESX86 = " + plugin().COMMONFILESX86);
+      addMessage("COMMONAPPDATA = " + plugin().COMMONAPPDATA);
+      addMessage("DESKTOP = " + plugin().DESKTOP);
+      addMessage("WINDIR = " + plugin().WINDIR);
+      addMessage("SYSDIR = " + plugin().SYSDIR);
+      addMessage("SYSDIRX86 = " + plugin().SYSDIRX86);
+      addMessage("\n");        
+
+      plugin().fileExists(
+        plugin().PROGRAMFILES + "/overwolf/Overwolf.exe.config", 
+        function(status) {
+        
+          if (status === true) {
+            addMessage(
+              plugin().PROGRAMFILES + 
+              "/overwolf/Overwolf.exe.config" + 
+              " exists on disk!");
+          } else {
+            addMessage(
+              plugin().PROGRAMFILES + 
+              "/overwolf/Overwolf.exe.config" + 
+              " does NOT exist on disk!");
+          }
+        });
+    
+      plugin().isDirectory(
+        plugin().PROGRAMFILES + "/overwolf", 
+        function(status) {
+        
+          if (status === true) {
+            addMessage(
+              plugin().PROGRAMFILES + 
+              "/overwolf" + 
+              " exists and is a directory");
+          } else {
+            addMessage(
+              plugin().PROGRAMFILES + 
+              "/overwolf" + 
+              " is not a directory or does NOT exist!");
+          }
+        });
+    
+    
+        plugin().getTextFile(
+          plugin().PROGRAMFILES + 
+          "/overwolf/Overwolf.exe.config", 
+          false, // not a widechars file (i.e. not ucs-2)
+          function(status, data) {
+          
+            if (!status) {
+              addMessage("failed to get Overwolf.exe.config");
+            } else {
+              addMessage(data);
+            }
+        });
+        
+        plugin().getBinaryFile(
+          plugin().PROGRAMFILES + 
+          "/overwolf/Overwolf.exe.config",
+          -1, // no limits
+          function(status, data) {
+   
+            if (!status) {
+              addMessage("failed to get Overwolf.exe.config");
+            } else {
+              var arr = data.split(",");
+              addMessage(arr);
+            }
+        });
+
+    </script>
+
+  </body>
+</html>
