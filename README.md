@@ -49,8 +49,7 @@ it will automatically do the UTF8 conversion.  Otherwise, returns in UTF8
 
 ```
 plugin().getTextFile(
-  plugin().PROGRAMFILES + 
-  "/overwolf/Overwolf.exe.config", 
+  plugin().PROGRAMFILES + "/overwolf/Overwolf.exe.config", 
   false, // not a UCS-2 file
   function(status, data) {
           
@@ -68,8 +67,7 @@ info using the second parameter (limit) to limit amount of data to fetch
 
 ```
 plugin().getBinaryFile(
-  plugin().PROGRAMFILES + 
-  "/overwolf/Overwolf.exe.config",
+  plugin().PROGRAMFILES + "/overwolf/Overwolf.exe.config",
   -1, // no limits
   function(status, data) {
     if (!status) {
