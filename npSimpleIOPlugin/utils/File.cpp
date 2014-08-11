@@ -50,10 +50,25 @@ bool File::GetTextFile(
   std::string& ref_output,
   int limit) {
   
+  DWORD dwSize = MAX_PATH;
+  WCHAR path[MAX_PATH] = {NULL};
+  if (0 >= GetTempPathW(dwSize, path)) {
+    return false;
+  }
+
+  WCHAR temp_file[MAX_PATH] = {NULL};
+  if (0 == GetTempFileNameW(path, L"IO_", 0, temp_file)) {
+    return false;
+  }
+
+  if (FALSE == CopyFileW(filename.c_str(), temp_file, FALSE)) {
+    return false;
+  }
+
   ref_output.clear();
-  
+ 
   HANDLE hFile = CreateFileW(
-    filename.c_str(),
+    temp_file,
     GENERIC_READ,          // open for reading
     FILE_SHARE_READ,       // share for reading
     NULL,                  // default security
@@ -66,7 +81,7 @@ bool File::GetTextFile(
   }
 
   bool status = false;
-  DWORD dwSize = GetFileSize(hFile, NULL);
+  dwSize = GetFileSize(hFile, NULL);
 
   if (dwSize > 0) {
     if (limit > 0) {
