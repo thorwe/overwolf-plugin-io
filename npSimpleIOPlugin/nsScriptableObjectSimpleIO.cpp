@@ -5,12 +5,15 @@
 #include "nsScriptableObjectSimpleIO.h"
 #include "utils/Thread.h"
 #include "utils/File.h"
-#include "utils/Encoders.h"
 
-#include <sstream>
+#include "plugin_method.h"
+#include "plugin_method_file_exists.h"
+#include "plugin_method_is_directory.h"
+#include "plugin_method_get_text_file.h"
+#include "plugin_method_get_binary_file.h"
 
 #define REGISTER_METHOD(name, method) { \
-  methods_[NPN_GetStringIdentifier(name)] = &method; \
+  methods_[NPN_GetStringIdentifier(name)] = method; \
 }
 
 #define REGISTER_GET_PROPERTY(name, val) { \
@@ -33,16 +36,17 @@ nsScriptableObjectSimpleIO::~nsScriptableObjectSimpleIO(void) {
 bool nsScriptableObjectSimpleIO::Init() {
   REGISTER_METHOD(
     "fileExists", 
-    nsScriptableObjectSimpleIO::FileExists);
+    new PluginMethodFileExists(this, npp_));
   REGISTER_METHOD(
     "isDirectory", 
-    nsScriptableObjectSimpleIO::IsDirectory);
+    new PluginMethodIsDirectory(this, npp_));
   REGISTER_METHOD(
     "getTextFile", 
-    nsScriptableObjectSimpleIO::GetTextFile);
+    new PluginMethodGetTextFile(this, npp_));
   REGISTER_METHOD(
     "getBinaryFile", 
-    nsScriptableObjectSimpleIO::GetBinaryFile);
+    new PluginMethodGetBinaryFile(this, npp_));
+
 
   REGISTER_GET_PROPERTY(
     "PROGRAMFILES", 
@@ -106,7 +110,19 @@ bool nsScriptableObjectSimpleIO::Invoke(
     return false;
   }
 
-  return (this->*iter->second)(name, args, argCount, result);
+  PluginMethod* plugin_method = 
+    iter->second->Clone(this, npp_, args, argCount, result);
+
+  if (nullptr == plugin_method) {
+    return false;
+  }
+
+  // post to separate thread so that we are responsive
+  return thread_->PostTask(
+    std::bind(
+    &nsScriptableObjectSimpleIO::ExecuteMethod, 
+    this,
+    plugin_method));
 }
 
 /************************************************************************/
@@ -150,273 +166,38 @@ bool nsScriptableObjectSimpleIO::SetProperty(
 
 
 /************************************************************************/
-/* Public methods
+/*
 /************************************************************************/
-bool nsScriptableObjectSimpleIO::FileExists(
-  NPIdentifier name, 
-  const NPVariant *args, 
-  uint32_t argCount, 
-  NPVariant *result) {
-
-  if (argCount < 2 ||
-    !NPVARIANT_IS_STRING(args[0]) ||
-    !NPVARIANT_IS_OBJECT(args[1])) {
-      NPN_SetException(this, "invalid params passed to function");
-      return true;
-  }
-
-  // add ref count to callback object so it won't delete
-  NPN_RetainObject(NPVARIANT_TO_OBJECT(args[1]));
-
-  // convert into std::string
-  std::string filename;
-  filename.append(
-    NPVARIANT_TO_STRING(args[0]).UTF8Characters,
-    NPVARIANT_TO_STRING(args[0]).UTF8Length);
-
-  // post to separate thread so that we are responsive
-  return thread_->PostTask(
-    std::bind(
-      &nsScriptableObjectSimpleIO::FileExistsTask, 
-      this, 
-      filename, 
-      false,
-      NPVARIANT_TO_OBJECT(args[1])));
-}
-
-bool nsScriptableObjectSimpleIO::IsDirectory(
-  NPIdentifier name, 
-  const NPVariant *args, 
-  uint32_t argCount, 
-  NPVariant *result) {
-
-  if (argCount < 2 ||
-    !NPVARIANT_IS_STRING(args[0]) ||
-    !NPVARIANT_IS_OBJECT(args[1])) {
-      NPN_SetException(this, "invalid params passed to function");
-      return true;
-  }
-
-  // add ref count to callback object so it won't delete
-  NPN_RetainObject(NPVARIANT_TO_OBJECT(args[1]));
-
-  // convert into std::string
-  std::string filename;
-  filename.append(
-    NPVARIANT_TO_STRING(args[0]).UTF8Characters,
-    NPVARIANT_TO_STRING(args[0]).UTF8Length);
-
-  // post to separate thread so that we are responsive
-  return thread_->PostTask(
-    std::bind(
-      &nsScriptableObjectSimpleIO::FileExistsTask, 
-      this, 
-      filename, 
-      true,
-      NPVARIANT_TO_OBJECT(args[1])));
-}
-
-bool nsScriptableObjectSimpleIO::GetTextFile(
-  NPIdentifier name, 
-  const NPVariant *args, 
-  uint32_t argCount, 
-  NPVariant *result) {
-
-  if (argCount < 3 ||
-      !NPVARIANT_IS_STRING(args[0]) ||
-      !NPVARIANT_IS_BOOLEAN(args[1]) ||
-      !NPVARIANT_IS_OBJECT(args[2])) {
-    NPN_SetException(this, "invalid params passed to function");
-    return true;
-  }
-
-  // add ref count to callback object so it won't delete
-  NPN_RetainObject(NPVARIANT_TO_OBJECT(args[2]));
-
-  std::string filename;
-  filename.append(
-    NPVARIANT_TO_STRING(args[0]).UTF8Characters,
-    NPVARIANT_TO_STRING(args[0]).UTF8Length);
-
-  // post to separate thread so that we are responsive
-  return thread_->PostTask(
-    std::bind(
-      &nsScriptableObjectSimpleIO::GetTextFileTask, 
-      this, 
-      filename, 
-      NPVARIANT_TO_BOOLEAN(args[1]),
-      NPVARIANT_TO_OBJECT(args[2])));
-}
-
-bool nsScriptableObjectSimpleIO::GetBinaryFile(
-  NPIdentifier name, 
-  const NPVariant *args, 
-  uint32_t argCount, 
-  NPVariant *result) {
-
-  if (argCount < 3 ||
-      !NPVARIANT_IS_STRING(args[0]) ||
-      !NPVARIANT_IS_DOUBLE(args[1]) ||
-      !NPVARIANT_IS_OBJECT(args[2])) {
-    NPN_SetException(this, "invalid params passed to function");
-    return true;
-  }
-
-  // add ref count to callback object so it won't delete
-  NPN_RetainObject(NPVARIANT_TO_OBJECT(args[2]));
-
-  std::string filename;
-  filename.append(
-    NPVARIANT_TO_STRING(args[0]).UTF8Characters,
-    NPVARIANT_TO_STRING(args[0]).UTF8Length);
-
-
-  int limit = (int)NPVARIANT_TO_DOUBLE(args[1]);
-
-  // post to separate thread so that we are responsive
-  return thread_->PostTask(
-    std::bind(
-      &nsScriptableObjectSimpleIO::GetBinaryFileTask, 
-      this, 
-      filename, 
-      limit,
-      NPVARIANT_TO_OBJECT(args[2])));
-}
-
-/************************************************************************/
-/* Separate thread implementations for public functions
-/************************************************************************/
-void nsScriptableObjectSimpleIO::FileExistsTask(
-  const std::string& filename, 
-  bool is_directory_test, 
-  NPObject* callback) {
-
+void nsScriptableObjectSimpleIO::ExecuteMethod(PluginMethod* method) {
   if (shutting_down_) {
     return;
   }
 
-  std::wstring wide_filename = utils::Encoders::utf8_decode(filename);
-
-  bool exists = false;
-
-  if (is_directory_test) {
-    exists = utils::File::IsDirectory(wide_filename);
-  } else {
-    exists = utils::File::DoesFileExist(wide_filename);
-  }
-
-  NPVariant arg;
-  NPVariant ret_val;
-
-  BOOLEAN_TO_NPVARIANT(
-    exists,
-    arg);
-
-  // fire callback
-  NPN_InvokeDefault(
-    __super::npp_, 
-    callback, 
-    &arg, 
-    1, 
-    &ret_val);
-
-  NPN_ReleaseVariantValue(&ret_val);
-}
-
-
-void nsScriptableObjectSimpleIO::GetTextFileTask(
-  const std::string& filename, 
-  bool widechars,
-  NPObject* callback) {
-
-  if (shutting_down_) {
+  if (nullptr == method) {
     return;
   }
 
-  std::wstring wide_filename = utils::Encoders::utf8_decode(filename);
+  method->Execute();
 
-  std::string output;
-  bool status = utils::File::GetTextFile(wide_filename, output, -1);
-
-  if (status && widechars) {
-    try {
-      std::wstring wstr((wchar_t*)output.c_str(), output.size()/2);
-      const wchar_t* b = wstr.c_str();
-      output = utils::Encoders::utf8_encode(wstr);
-      const char* c = output.c_str();
-    } catch(...) {
-
-    }
-  }
-
-  NPVariant args[2];
-  NPVariant ret_val;
-
-  BOOLEAN_TO_NPVARIANT(
-    status,
-    args[0]);
-
-  STRINGN_TO_NPVARIANT(
-    output.c_str(),
-    output.size(),
-    args[1]);
-
-  // fire callback
-  NPN_InvokeDefault(
-    __super::npp_, 
-    callback, 
-    args, 
-    2, 
-    &ret_val);
-
-  NPN_ReleaseVariantValue(&ret_val);
-}
-
-void nsScriptableObjectSimpleIO::GetBinaryFileTask(
-  const std::string& filename,
-  int limit,
-  NPObject* callback) {
-
-  if (shutting_down_) {
+  if (!method->HasCallback()) {
+    delete method;
     return;
   }
 
-  std::wstring wide_filename = utils::Encoders::utf8_decode(filename);
+  NPN_PluginThreadAsyncCall(
+    npp_, 
+    nsScriptableObjectSimpleIO::ExecuteCallback, 
+    method);
+}
 
-  std::string output;
-  bool status = utils::File::GetTextFile(wide_filename, output, limit);
-
-  NPVariant args[2];
-  NPVariant ret_val;
-
-  if (status) {
-    std::ostringstream str;
-    if (output.size() > 0) {
-      str << (int)output[0];
-    }
-    for (size_t i = 1; i < output.size(); ++i) {
-      str << "," << (int)output[i];
-    }
-
-    output = str.str();
-    STRINGN_TO_NPVARIANT(
-      output.c_str(),
-      output.size(),
-      args[1]);
+//static
+void nsScriptableObjectSimpleIO::ExecuteCallback(void* method) {
+  if (nullptr == method) {
+    return;
   }
 
-  BOOLEAN_TO_NPVARIANT(
-    status,
-    args[0]);
+  PluginMethod* plugin_method = reinterpret_cast<PluginMethod*>(method);
+  plugin_method->TriggerCallback();
 
-
-  // fire callback
-  NPN_InvokeDefault(
-    __super::npp_, 
-    callback, 
-    args, 
-    2, 
-    &ret_val);
-
-  NPN_ReleaseVariantValue(&ret_val);
+  delete plugin_method;
 }

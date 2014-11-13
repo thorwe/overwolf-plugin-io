@@ -34,6 +34,21 @@
     <ClCompile Include="utils\Encoders.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
+    <ClCompile Include="plugin_method.cpp">
+      <Filter>Source Files\plugin_methods</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_method_get_text_file.cpp">
+      <Filter>Source Files\plugin_methods</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_method_get_binary_file.cpp">
+      <Filter>Source Files\plugin_methods</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_method_is_directory.cpp">
+      <Filter>Source Files\plugin_methods</Filter>
+    </ClCompile>
+    <ClCompile Include="plugin_method_file_exists.cpp">
+      <Filter>Source Files\plugin_methods</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\Thread.h">
@@ -61,6 +76,21 @@
     <ClInclude Include="utils\Encoders.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
+    <ClInclude Include="plugin_method.h">
+      <Filter>Header Files\plugin_methods</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_method_get_text_file.h">
+      <Filter>Header Files\plugin_methods</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_method_get_binary_file.h">
+      <Filter>Header Files\plugin_methods</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_method_file_exists.h">
+      <Filter>Header Files\plugin_methods</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_method_is_directory.h">
+      <Filter>Header Files\plugin_methods</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
@@ -83,6 +113,12 @@
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{b659ece1-45d1-4758-9ed2-c0da2a107e9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\plugin_methods">
+      <UniqueIdentifier>{b0b5b4c6-5cc1-4f2b-a3be-a5500da229d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\plugin_methods">
+      <UniqueIdentifier>{5c42a925-68ad-45a0-b4e5-83ded7aaca7c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

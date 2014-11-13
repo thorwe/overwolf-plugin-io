@@ -143,6 +143,11 @@
     <ClCompile Include="plugin_common\npn_gate.cpp" />
     <ClCompile Include="plugin_common\npp_gate.cpp" />
     <ClCompile Include="plugin_common\np_entry.cpp" />
+    <ClCompile Include="plugin_method.cpp" />
+    <ClCompile Include="plugin_method_file_exists.cpp" />
+    <ClCompile Include="plugin_method_get_binary_file.cpp" />
+    <ClCompile Include="plugin_method_get_text_file.cpp" />
+    <ClCompile Include="plugin_method_is_directory.cpp" />
     <ClCompile Include="utils\CriticalSectionLock.cpp" />
     <ClCompile Include="utils\Encoders.cpp" />
     <ClCompile Include="utils\File.cpp" />
@@ -159,6 +164,11 @@
     <ClInclude Include="nsScriptableObjectSimpleIO.h" />
     <ClInclude Include="nsPluginInstanceSimpleIO.h" />
     <ClInclude Include="plugin_common\pluginbase.h" />
+    <ClInclude Include="plugin_method.h" />
+    <ClInclude Include="plugin_method_file_exists.h" />
+    <ClInclude Include="plugin_method_get_binary_file.h" />
+    <ClInclude Include="plugin_method_get_text_file.h" />
+    <ClInclude Include="plugin_method_is_directory.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="utils\CriticalSectionLock.h" />
     <ClInclude Include="utils\Encoders.h" />
