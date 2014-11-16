@@ -22,6 +22,13 @@ public:
     const std::wstring& filename, 
     std::string& ref_output,
     int limit);
+
+  static bool GetFileTimes(
+    const std::wstring& filename, 
+    __int64& ref_creation_time,
+    __int64& ref_last_access_time,
+    __int64& ref_last_write_time);
+
 }; // class File
 
 }; // namespace utils;

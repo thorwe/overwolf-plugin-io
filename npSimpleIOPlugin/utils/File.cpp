@@ -89,11 +89,13 @@ bool File::GetTextFile(
     }
     char* buffer = new char[dwSize];
 
+    DWORD dwBytesReadDummy = 0; // otherwise we get a crash in win7 (a.k.a. RTFM)
+
     status = (TRUE == ReadFile(
       hFile, 
       (void*)buffer, 
       dwSize, 
-      nullptr, 
+      &dwBytesReadDummy, 
       nullptr));
 
     if (status) {
@@ -106,4 +108,13 @@ bool File::GetTextFile(
   CloseHandle(hFile);
 
   return status;
+}
+
+//static 
+bool File::GetFileTimes(
+  const std::wstring& filename, 
+  __int64& ref_creation_time,
+  __int64& ref_last_access_time,
+  __int64& ref_last_write_time) {
+  return false;
 }
