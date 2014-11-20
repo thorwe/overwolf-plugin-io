@@ -12,12 +12,14 @@
 #include "plugin_method_get_text_file.h"
 #include "plugin_method_get_binary_file.h"
 
-#define REGISTER_METHOD(name, method) { \
-  methods_[NPN_GetStringIdentifier(name)] = method; \
+#define REGISTER_METHOD(name, class) { \
+  methods_[NPN_GetStringIdentifier(name)] = \
+    new class(this, npp_); \
 }
 
-#define REGISTER_GET_PROPERTY(name, val) { \
-  properties_[NPN_GetStringIdentifier(name)] = val; \
+#define REGISTER_GET_PROPERTY(name, csidl) { \
+  properties_[NPN_GetStringIdentifier(name)] = \
+    utils::File::GetSpecialFolderUtf8(csidl); \
 }
 
 nsScriptableObjectSimpleIO::nsScriptableObjectSimpleIO(NPP npp) :
@@ -34,48 +36,34 @@ nsScriptableObjectSimpleIO::~nsScriptableObjectSimpleIO(void) {
 }
 
 bool nsScriptableObjectSimpleIO::Init() {
-  REGISTER_METHOD(
-    "fileExists", 
-    new PluginMethodFileExists(this, npp_));
-  REGISTER_METHOD(
-    "isDirectory", 
-    new PluginMethodIsDirectory(this, npp_));
-  REGISTER_METHOD(
-    "getTextFile", 
-    new PluginMethodGetTextFile(this, npp_));
-  REGISTER_METHOD(
-    "getBinaryFile", 
-    new PluginMethodGetBinaryFile(this, npp_));
+#pragma region public methods
+  REGISTER_METHOD("fileExists", PluginMethodFileExists);
+  REGISTER_METHOD("isDirectory", PluginMethodIsDirectory);
+  REGISTER_METHOD("getTextFile", PluginMethodGetTextFile);
+  REGISTER_METHOD("getBinaryFile", PluginMethodGetBinaryFile);
+#pragma endregion public methods
 
+#pragma region read-only properties
+  REGISTER_GET_PROPERTY("PROGRAMFILES", CSIDL_PROGRAM_FILES);
+  REGISTER_GET_PROPERTY("PROGRAMFILESX86", CSIDL_PROGRAM_FILESX86);
+  REGISTER_GET_PROPERTY("COMMONFILES", CSIDL_PROGRAM_FILES_COMMON);
+  REGISTER_GET_PROPERTY("COMMONFILESX86", CSIDL_PROGRAM_FILES_COMMONX86);
+  REGISTER_GET_PROPERTY("COMMONAPPDATA", CSIDL_COMMON_APPDATA);
+  REGISTER_GET_PROPERTY("DESKTOP", CSIDL_DESKTOP);
+  REGISTER_GET_PROPERTY("WINDIR", CSIDL_WINDOWS);
+  REGISTER_GET_PROPERTY("SYSDIR", CSIDL_SYSTEM);
+  REGISTER_GET_PROPERTY("SYSDIRX86", CSIDL_SYSTEMX86);
 
-  REGISTER_GET_PROPERTY(
-    "PROGRAMFILES", 
-    utils::File::GetSpecialFolderUtf8(CSIDL_PROGRAM_FILES));
-  REGISTER_GET_PROPERTY(
-    "PROGRAMFILESX86", 
-    utils::File::GetSpecialFolderUtf8(CSIDL_PROGRAM_FILESX86));
-  REGISTER_GET_PROPERTY(
-    "COMMONFILES", 
-    utils::File::GetSpecialFolderUtf8(CSIDL_PROGRAM_FILES_COMMON));
-  REGISTER_GET_PROPERTY(
-    "COMMONFILESX86", 
-    utils::File::GetSpecialFolderUtf8(CSIDL_PROGRAM_FILES_COMMONX86));
-  REGISTER_GET_PROPERTY(
-    "COMMONAPPDATA", 
-    utils::File::GetSpecialFolderUtf8(CSIDL_COMMON_APPDATA));
-  REGISTER_GET_PROPERTY(
-    "DESKTOP", 
-    utils::File::GetSpecialFolderUtf8(CSIDL_DESKTOP));
-  REGISTER_GET_PROPERTY(
-    "WINDIR", 
-    utils::File::GetSpecialFolderUtf8(CSIDL_WINDOWS));
-  REGISTER_GET_PROPERTY(
-    "SYSDIR", 
-    utils::File::GetSpecialFolderUtf8(CSIDL_SYSTEM));
-  REGISTER_GET_PROPERTY(
-    "SYSDIRX86", 
-    utils::File::GetSpecialFolderUtf8(CSIDL_SYSTEMX86));
-
+  REGISTER_GET_PROPERTY("MYDOCUMENTS", CSIDL_MYDOCUMENTS);
+  REGISTER_GET_PROPERTY("MYVIDEOS", CSIDL_MYVIDEO);
+  REGISTER_GET_PROPERTY("MYPICTURES", CSIDL_MYPICTURES);
+  REGISTER_GET_PROPERTY("MYMUSIC", CSIDL_MYMUSIC);
+  REGISTER_GET_PROPERTY("COMMONDOCUMENTS", CSIDL_COMMON_DOCUMENTS);
+  REGISTER_GET_PROPERTY("FAVORITES", CSIDL_FAVORITES);
+  REGISTER_GET_PROPERTY("FONTS", CSIDL_FONTS);
+  REGISTER_GET_PROPERTY("HISTORY", CSIDL_HISTORY);
+  REGISTER_GET_PROPERTY("STARTMENU", CSIDL_STARTMENU);
+#pragma endregion read-only properties
 
   thread_.reset(new utils::Thread());
   return thread_->Start();
