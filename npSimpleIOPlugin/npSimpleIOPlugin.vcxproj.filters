@@ -49,6 +49,9 @@
     <ClCompile Include="plugin_method_file_exists.cpp">
       <Filter>Source Files\plugin_methods</Filter>
     </ClCompile>
+    <ClCompile Include="plugin_method_get_file_times.cpp">
+      <Filter>Source Files\plugin_methods</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\Thread.h">
@@ -89,6 +92,9 @@
       <Filter>Header Files\plugin_methods</Filter>
     </ClInclude>
     <ClInclude Include="plugin_method_is_directory.h">
+      <Filter>Header Files\plugin_methods</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_method_get_file_times.h">
       <Filter>Header Files\plugin_methods</Filter>
     </ClInclude>
   </ItemGroup>
