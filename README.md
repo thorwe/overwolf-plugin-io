@@ -13,6 +13,15 @@ plugin().DESKTOP
 plugin().WINDIR
 plugin().SYSDIR
 plugin().SYSDIRX86
+plugin().MYDOCUMENTS
+plugin().MYVIDEOS
+plugin().MYPICTURES
+plugin().MYMUSIC
+plugin().COMMONDOCUMENTS
+plugin().FAVORITES
+plugin().FONTS
+plugin().HISTORY
+plugin().STARTMENU
 ```
 
 Functions:
