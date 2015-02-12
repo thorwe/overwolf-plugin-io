@@ -11,6 +11,7 @@
 #include "plugin_method_is_directory.h"
 #include "plugin_method_get_text_file.h"
 #include "plugin_method_get_binary_file.h"
+#include "plugin_method_set_file.h"
 
 #define REGISTER_METHOD(name, class) { \
   methods_[NPN_GetStringIdentifier(name)] = \
@@ -41,6 +42,7 @@ bool nsScriptableObjectSimpleIO::Init() {
   REGISTER_METHOD("isDirectory", PluginMethodIsDirectory);
   REGISTER_METHOD("getTextFile", PluginMethodGetTextFile);
   REGISTER_METHOD("getBinaryFile", PluginMethodGetBinaryFile);
+  REGISTER_METHOD("setFile", PluginMethodSetFile);
 #pragma endregion public methods
 
 #pragma region read-only properties

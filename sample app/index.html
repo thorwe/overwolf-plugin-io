@@ -22,6 +22,12 @@
         obj.innerText = message;
         document.querySelector('#messages').appendChild(obj);
       }
+	  
+	  function addHTMLMessage(message) {
+		var obj = document.createElement("div");
+        obj.innerHTML = message;
+        document.querySelector('#messages').appendChild(obj);
+	  }
       
       function plugin() {
         return document.querySelector('#plugin');
@@ -116,6 +122,20 @@
               addMessage(arr);
             }
         });
+		
+		function TestWriteFileToDesktop() {
+			var myJSON = {
+				"best": true,
+				"test": "true",
+				"test3": false
+			}
+			var myString = JSON.stringify(myJSON, null, '\t');
+			var fileName = plugin().DESKTOP + "\\" + "TestFile.json";
+			plugin().setFile(fileName, myString, function(result) {
+				addMessage("Set File Test: " + result);
+			});
+		}
+		addHTMLMessage("<a href='#' onclick='TestWriteFileToDesktop(); return false;'>Test Write File to Desktop</a>");
 
     </script>
 

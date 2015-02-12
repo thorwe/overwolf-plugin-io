@@ -4,6 +4,7 @@
 */
 #include "File.h"
 #include "Encoders.h"
+#include "Base64.h"
 
 #include <windows.h>
 #include <shlwapi.h>
@@ -117,4 +118,87 @@ bool File::GetFileTimes(
   __int64& ref_last_access_time,
   __int64& ref_last_write_time) {
   return false;
+}
+
+
+bool File::SetFile(
+	const std::wstring& filename,
+	const std::string& ref_input
+	) {
+
+	std::vector<BYTE> DataBuffer;
+
+	// automagical Base64 encoded png support
+
+	size_t filename_size = filename.size();	// wstring size, good enough for last chars?
+	std::wstring file_ending;
+
+	if (filename_size > 4)
+	{
+		file_ending = filename.substr(filename_size - 4, 4);
+	};
+
+	if (file_ending == L".png" || file_ending == L".PNG")	// good enough for me
+	{
+		std::size_t pos = ref_input.find("data:image/png;base64,");	
+		if (pos != std::string::npos)
+		{
+			DataBuffer = base64_decode(ref_input.substr(pos + 22));
+		}
+	}
+	else
+	{
+		DataBuffer.assign((byte*)ref_input.c_str(), (byte*)ref_input.c_str() + strlen(ref_input.c_str()));
+	}
+
+	DWORD dwBytesToWrite = DataBuffer.size();
+	if (dwBytesToWrite == 0)
+		return false;
+
+	// prefix "\\?\" for http://msdn.microsoft.com/en-us/library/windows/desktop/aa363858%28v=vs.85%29.aspx
+	std::wstring ufname = L"\\\\?\\" + filename;
+
+	LPCWSTR f_name = (LPCWSTR)ufname.c_str();
+	HANDLE hFile = CreateFileW(
+		f_name,
+		GENERIC_WRITE,          // open for writing
+		0,                      // do not share
+		NULL,                   // default security
+		CREATE_ALWAYS,             // overwrite existing file
+		FILE_ATTRIBUTE_NORMAL,  // normal file
+		NULL);                  // no attr. template
+
+	if (INVALID_HANDLE_VALUE == hFile) {
+		return false;
+	}
+
+	bool status = false;
+	DWORD dwBytesWritten = 0;
+	BOOL bErrorFlag = FALSE;
+
+	bErrorFlag = WriteFile(
+		hFile,           // open file handle
+		DataBuffer.data(),      // start of data to write
+		dwBytesToWrite,  // number of bytes to write
+		&dwBytesWritten, // number of bytes that were written
+		NULL);            // no overlapped structure
+
+	if (FALSE != bErrorFlag)
+	{
+		if (dwBytesWritten == dwBytesToWrite)
+		{
+			status = true;
+		}
+		/*else
+		{
+		// This is an error because a synchronous write that results in
+		// success (WriteFile returns TRUE) should write all data as
+		// requested. This would not necessarily be the case for
+		// asynchronous writes.
+		}*/
+	}
+
+	CloseHandle(hFile);
+
+	return status;
 }

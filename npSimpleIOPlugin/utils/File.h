@@ -29,6 +29,11 @@ public:
     __int64& ref_last_access_time,
     __int64& ref_last_write_time);
 
+  static bool SetFile(
+	  const std::wstring& filename,
+	  const std::string& ref_input
+	  );
+
 }; // class File
 
 }; // namespace utils;
