@@ -151,6 +151,20 @@
 		}
 		addHTMLMessage("<a href='#' onclick='onTestShellExec(); return false;'>Open Notepad</a>");
 
+		function TestWriteFileToDesktop() {
+			var myJSON = {
+				"best": true,
+				"test": "true",
+				"test3": false
+			}
+			var myString = JSON.stringify(myJSON, null, '\t');
+			var fileName = plugin().DESKTOP + "\\" + "TestFile.json";
+			plugin().setFile(fileName, myString, function(result) {
+				addMessage("Set File Test: " + result);
+			});
+		}
+		addHTMLMessage("<a href='#' onclick='TestWriteFileToDesktop(); return false;'>Test Write File to Desktop</a>");
+
     </script>
 
   </body>
