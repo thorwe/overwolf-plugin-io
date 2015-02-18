@@ -149,6 +149,7 @@
     <ClCompile Include="plugin_method_get_file_times.cpp" />
     <ClCompile Include="plugin_method_get_text_file.cpp" />
     <ClCompile Include="plugin_method_is_directory.cpp" />
+    <ClCompile Include="plugin_method_shell_exec.cpp" />
     <ClCompile Include="utils\CriticalSectionLock.cpp" />
     <ClCompile Include="utils\Encoders.cpp" />
     <ClCompile Include="utils\File.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="plugin_method_get_file_times.h" />
     <ClInclude Include="plugin_method_get_text_file.h" />
     <ClInclude Include="plugin_method_is_directory.h" />
+    <ClInclude Include="plugin_method_shell_exec.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="utils\CriticalSectionLock.h" />
     <ClInclude Include="utils\Encoders.h" />

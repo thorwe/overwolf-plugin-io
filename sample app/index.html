@@ -22,6 +22,12 @@
         obj.innerText = message;
         document.querySelector('#messages').appendChild(obj);
       }
+	  
+	  function addHTMLMessage(message) {
+		var obj = document.createElement("div");
+        obj.innerHTML = message;
+        document.querySelector('#messages').appendChild(obj);
+	  }
       
       function plugin() {
         return document.querySelector('#plugin');
@@ -116,6 +122,34 @@
               addMessage(arr);
             }
         });
+		
+		function onTestShellExec() {
+			var mypath = plugin().WINDIR;
+			plugin().isDirectory( 
+				mypath, 
+				function(status) {
+					if (status === true) {
+						mypath += "\\notepad.exe";
+						plugin().fileExists( 
+							mypath, 
+							function(status) { 
+								if (status === true) {
+									plugin().shellExec(
+										mypath,
+										function(result) {
+											addMessage("ShellExec Test result: " + result);
+										}
+									);
+								} else {
+									addMessage(mypath, "ShellExec Test: File does not exist: " + mypath);
+								}
+						});
+					} else {
+						addMessage("ShellExec Test: Path not found: " + mypath);
+					}
+			});
+		}
+		addHTMLMessage("<a href='#' onclick='onTestShellExec(); return false;'>Open Notepad</a>");
 
     </script>
 
