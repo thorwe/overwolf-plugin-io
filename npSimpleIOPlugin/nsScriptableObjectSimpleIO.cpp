@@ -63,6 +63,8 @@ bool nsScriptableObjectSimpleIO::Init() {
   REGISTER_GET_PROPERTY("FONTS", CSIDL_FONTS);
   REGISTER_GET_PROPERTY("HISTORY", CSIDL_HISTORY);
   REGISTER_GET_PROPERTY("STARTMENU", CSIDL_STARTMENU);
+
+  REGISTER_GET_PROPERTY("LOCALAPPDATA", CSIDL_LOCAL_APPDATA);
 #pragma endregion read-only properties
 
   thread_.reset(new utils::Thread());
