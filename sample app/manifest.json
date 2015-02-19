@@ -2,13 +2,13 @@
   "manifest_version":"1",
   "type":"WebApp",
   "meta":{
-    "name":"Simple IO Plugin Sample",
+    "name":"IO Plugin Sample",
     "version":"1.0.0.5",
     "minimum-overwolf-version": "0.77.4.0",
-    "author":"Overwolf",
+    "author":"Overwolf; Thorwe",
     "icon":"icon.png",
     "icon_gray":"icon_gray.png",
-    "description":"Sample app for using the simple IO plugin"
+    "description":"Sample app for using the IO plugin"
   },
   "data": {
     "start_window":"index",
@@ -29,7 +29,7 @@
       }
     },
     "plugins": [
-      "npSimpleIOPlugin.dll"
+      "npIOPlugin.dll"
     ]
   }
 }

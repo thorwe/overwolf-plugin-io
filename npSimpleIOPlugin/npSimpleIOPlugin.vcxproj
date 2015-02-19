@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <SccProjectName />
     <SccLocalPath />
-    <ProjectName>npSimpleIOPlugin</ProjectName>
+    <ProjectName>npIOPlugin</ProjectName>
     <ProjectGuid>{8754692C-87D8-5C0C-71E4-924F516D54EB}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -58,7 +58,7 @@
       <Optimization>MaxSpeed</Optimization>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..\xulrunner-sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\xulrunner-sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;MOZILLA_STRICT_API;XP_WIN;WIN32;_WINDOWS;_USRDLL;npSimpleIOPlugin_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\Release\npSimpleIOPlugin.pch</PrecompiledHeaderOutputFile>
@@ -84,7 +84,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <LinkDLL>true</LinkDLL>
       <SubSystem>Console</SubSystem>
-      <OutputFile>.\Release\npSimpleIOPlugin.dll</OutputFile>
+      <OutputFile>.\Release\$(TargetName).dll</OutputFile>
       <ImportLibrary>.\Release\npSimpleIOPlugin.lib</ImportLibrary>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>.\npSimpleIOPlugin.def</ModuleDefinitionFile>
@@ -100,7 +100,7 @@
       <WarningLevel>Level3</WarningLevel>
       <MinimalRebuild>true</MinimalRebuild>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\xulrunner-sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\xulrunner-sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;MOZILLA_STRICT_API;XP_WIN;WIN32;_WINDOWS;_USRDLL;npSimpleIOPlugin_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\Debug\npSimpleIOPlugin.pch</PrecompiledHeaderOutputFile>
@@ -128,7 +128,7 @@
       <LinkDLL>true</LinkDLL>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <OutputFile>.\Debug\npSimpleIOPlugin.dll</OutputFile>
+      <OutputFile>.\Debug\$(TargetName).dll</OutputFile>
       <ImportLibrary>.\Debug\npSimpleIOPlugin.lib</ImportLibrary>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>.\npSimpleIOPlugin.def</ModuleDefinitionFile>
@@ -146,11 +146,11 @@
     <ClCompile Include="plugin_method.cpp" />
     <ClCompile Include="plugin_method_file_exists.cpp" />
     <ClCompile Include="plugin_method_get_binary_file.cpp" />
-    <ClCompile Include="plugin_method_get_file_times.cpp" />
     <ClCompile Include="plugin_method_get_text_file.cpp" />
     <ClCompile Include="plugin_method_is_directory.cpp" />
-    <ClCompile Include="plugin_method_shell_exec.cpp" />
     <ClCompile Include="plugin_method_set_file.cpp" />
+    <ClCompile Include="plugin_method_shell_exec.cpp" />
+    <ClCompile Include="utils\Base64.cpp" />
     <ClCompile Include="utils\CriticalSectionLock.cpp" />
     <ClCompile Include="utils\Encoders.cpp" />
     <ClCompile Include="utils\File.cpp" />
@@ -170,12 +170,12 @@
     <ClInclude Include="plugin_method.h" />
     <ClInclude Include="plugin_method_file_exists.h" />
     <ClInclude Include="plugin_method_get_binary_file.h" />
-    <ClInclude Include="plugin_method_get_file_times.h" />
     <ClInclude Include="plugin_method_get_text_file.h" />
     <ClInclude Include="plugin_method_is_directory.h" />
-    <ClInclude Include="plugin_method_shell_exec.h" />
     <ClInclude Include="plugin_method_set_file.h" />
+    <ClInclude Include="plugin_method_shell_exec.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="utils\Base64.h" />
     <ClInclude Include="utils\CriticalSectionLock.h" />
     <ClInclude Include="utils\Encoders.h" />
     <ClInclude Include="utils\File.h" />

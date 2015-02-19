@@ -42,14 +42,14 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "Overwolf Ltd."
-            VALUE "FileDescription", "npSimpleIOPlugin"
-            VALUE "FileOpenName", "npSimpleIOPlugin"
+            VALUE "FileDescription", "npIOPlugin"
+            VALUE "FileOpenName", "npIOPlugin"
             VALUE "FileVersion", "1.0.0.5"
-            VALUE "InternalName", "npSimpleIOPlugin"
+            VALUE "InternalName", "npIOPlugin"
             VALUE "LegalCopyright", "Copyright 2015 Overwolf Ltd."
-            VALUE "MIMEType", "application/x-simple-io-plugin"
-            VALUE "OriginalFilename", "npSimpleIOPlugin.dll"
-            VALUE "ProductName", "Simple IO Plugin"
+            VALUE "MIMEType", "application/x-io-plugin"
+            VALUE "OriginalFilename", "npIOPlugin.dll"
+            VALUE "ProductName", "IO Plugin"
             VALUE "ProductVersion", "1.0.0.5"
         END
     END
