@@ -49,11 +49,11 @@
     <ClCompile Include="plugin_method_file_exists.cpp">
       <Filter>Source Files\plugin_methods</Filter>
     </ClCompile>
-    <ClCompile Include="plugin_method_get_file_times.cpp">
-      <Filter>Source Files\plugin_methods</Filter>
-    </ClCompile>
     <ClCompile Include="plugin_method_shell_exec.cpp">
       <Filter>Source Files\plugin_methods</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\Base64.cpp">
+      <Filter>Source Files\utils</Filter>
     </ClCompile>
     <ClCompile Include="plugin_method_set_file.cpp">
       <Filter>Source Files\plugin_methods</Filter>
@@ -100,11 +100,11 @@
     <ClInclude Include="plugin_method_is_directory.h">
       <Filter>Header Files\plugin_methods</Filter>
     </ClInclude>
-    <ClInclude Include="plugin_method_get_file_times.h">
-      <Filter>Header Files\plugin_methods</Filter>
-    </ClInclude>
     <ClInclude Include="plugin_method_shell_exec.h">
       <Filter>Header Files\plugin_methods</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Base64.h">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="plugin_method_set_file.h">
       <Filter>Header Files\plugin_methods</Filter>
