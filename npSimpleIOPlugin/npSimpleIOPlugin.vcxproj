@@ -148,6 +148,7 @@
     <ClCompile Include="plugin_method_get_binary_file.cpp" />
     <ClCompile Include="plugin_method_get_text_file.cpp" />
     <ClCompile Include="plugin_method_is_directory.cpp" />
+    <ClCompile Include="plugin_method_list_files.cpp" />
     <ClCompile Include="plugin_method_set_file.cpp" />
     <ClCompile Include="plugin_method_shell_exec.cpp" />
     <ClCompile Include="utils\Base64.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="plugin_method_get_binary_file.h" />
     <ClInclude Include="plugin_method_get_text_file.h" />
     <ClInclude Include="plugin_method_is_directory.h" />
+    <ClInclude Include="plugin_method_list_files.h" />
     <ClInclude Include="plugin_method_set_file.h" />
     <ClInclude Include="plugin_method_shell_exec.h" />
     <ClInclude Include="resource.h" />

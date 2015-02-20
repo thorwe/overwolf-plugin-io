@@ -34,6 +34,11 @@ public:
 	  const std::string& ref_input
 	  );
 
+  static bool ListDirectoryContents(
+	  const std::wstring& filename,
+	  std::string& ref_output
+	  );
+
 }; // class File
 
 }; // namespace utils;
