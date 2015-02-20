@@ -202,3 +202,69 @@ bool File::SetFile(
 
 	return status;
 }
+
+bool File::ListDirectoryContents(
+	const std::wstring& pathname,
+	std::string& ref_output) {
+
+	if (!IsDirectory(pathname))
+		return false;
+
+	WIN32_FIND_DATAW fdFile;
+	HANDLE hFind = NULL;
+
+	wchar_t sPath[2048];
+	
+	//Specify a file mask. *.* = We want everything! 
+	wsprintfW(sPath, L"%s\\*.*", pathname);
+	
+	std::wstring sFolders = L"";
+	std::wstring sFiles = L"";
+
+	if ((hFind = FindFirstFileW(sPath, &fdFile)) == INVALID_HANDLE_VALUE)
+		return false;
+
+	do
+	{
+		//Find first file will always return "."
+		//    and ".." as the first two directories. 
+		if (wcscmp(fdFile.cFileName, L".") != 0
+			&& wcscmp(fdFile.cFileName, L"..") != 0)
+		{
+			if (fdFile.dwFileAttributes &FILE_ATTRIBUTE_DIRECTORY)
+			{
+				sFolders += L"\"";
+				sFolders += fdFile.cFileName;
+				sFolders += (L"\",");
+			}
+			else
+			{
+				sFiles += L"\"";
+				sFiles += fdFile.cFileName;
+				sFiles += (L"\",");
+			}
+
+		}
+	} while (FindNextFileW(hFind, &fdFile)); //Find the next file. 
+
+	FindClose(hFind); //Always, Always, clean things up! 
+
+	std::wstring sOut = L"{\"files\":[";
+	
+	if (!sFiles.empty())
+	{
+		sOut.append(sFiles);
+		sOut.pop_back();	// remove last L","
+	}
+	sOut.append(L"],\"folders\":[");
+	if (!sFolders.empty())
+	{
+		sOut.append(sFolders);
+		sOut.pop_back();	// remove last L","
+	}
+	sOut.append(L"]}");
+	
+	ref_output = Encoders::utf8_encode(sOut);
+
+	return true;
+}

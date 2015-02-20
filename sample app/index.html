@@ -82,18 +82,13 @@
       plugin().isDirectory(
         plugin().PROGRAMFILES + "/overwolf", 
         function(status) {
-        
-          if (status === true) {
-            addMessage(
-              plugin().PROGRAMFILES + 
-              "/overwolf" + 
-              " exists and is a directory");
-          } else {
-            addMessage(
-              plugin().PROGRAMFILES + 
-              "/overwolf" + 
-              " is not a directory or does NOT exist!");
-          }
+			addMessage(plugin().PROGRAMFILES + "/overwolf" + ((status===true)?" exists and is a directory":" is not a directory or does NOT exist!"));
+			
+			plugin().listDirectoryContents(plugin().PROGRAMFILES + ((status===true)?"/overwolf":""), function(status, data) {
+				addMessage("listDirectoryContents: " + ((status===true)?"success":"failed"));
+				if (status===true)
+					addMessage(JSON.stringify(JSON.parse(data), null, '\t'));	// JSON compat test
+			});
         });
     
     

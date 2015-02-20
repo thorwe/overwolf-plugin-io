@@ -58,6 +58,9 @@
     <ClCompile Include="plugin_method_set_file.cpp">
       <Filter>Source Files\plugin_methods</Filter>
     </ClCompile>
+    <ClCompile Include="plugin_method_list_files.cpp">
+      <Filter>Source Files\plugin_methods</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\Thread.h">
@@ -107,6 +110,9 @@
       <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="plugin_method_set_file.h">
+      <Filter>Header Files\plugin_methods</Filter>
+    </ClInclude>
+    <ClInclude Include="plugin_method_list_files.h">
       <Filter>Header Files\plugin_methods</Filter>
     </ClInclude>
   </ItemGroup>
