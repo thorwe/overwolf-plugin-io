@@ -98,9 +98,10 @@
           false, // not a widechars file (i.e. not ucs-2)
           function(status, data) {
           
-            if (!status) {
+            if (status !== "success") {
               addMessage("failed to get Overwolf.exe.config");
             } else {
+                addMessage("getTextFile " + status);
               addMessage(data);
             }
         });
@@ -111,9 +112,10 @@
           -1, // no limits
           function(status, data) {
    
-            if (!status) {
-              addMessage("failed to get Overwolf.exe.config");
+            if (status !== "success") {
+              addMessage("failed to get Overwolf.exe.config: " + status);
             } else {
+                addMessage("getBinaryFile " + status);
               var arr = data.split(",");
               addMessage(arr);
             }
