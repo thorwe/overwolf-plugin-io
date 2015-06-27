@@ -264,7 +264,7 @@ bool File::ListDirectoryContents(
 	wchar_t sPath[2048];
 	
 	//Specify a file mask. *.* = We want everything! 
-	wsprintfW(sPath, L"%s\\*.*", pathname);
+	wsprintfW(sPath, L"%s\\*.*", pathname.c_str());
 	
 	std::wstring sFolders = L"";
 	std::wstring sFiles = L"";
