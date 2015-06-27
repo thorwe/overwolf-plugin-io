@@ -12,14 +12,13 @@ namespace utils {
 
 class File {
 public:
-	static std::string File::GetLastErrorStdStr();
   static std::wstring GetSpecialFolderWide(int csidl);
   static std::string GetSpecialFolderUtf8(int csidl);
 
   static bool DoesFileExist(const std::wstring& filename);
   static bool IsDirectory(const std::wstring& directory);
 
-  static std::string GetTextFile(
+  static bool GetTextFile(
     const std::wstring& filename, 
     std::string& ref_output,
     int limit);
@@ -30,7 +29,7 @@ public:
     __int64& ref_last_access_time,
     __int64& ref_last_write_time);
 
-  static std::string SetFile(
+  static bool SetFile(
 	  const std::wstring& filename,
 	  const std::string& ref_input
 	  );

@@ -29,7 +29,7 @@ protected:
   NPObject* callback_;
 
   // callack
-  std::string status_;
+  bool status_;
   std::string output_;
 };
 

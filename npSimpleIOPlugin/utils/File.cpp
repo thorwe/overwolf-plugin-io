@@ -11,34 +11,6 @@
 
 using namespace utils;
 
-std::string File::GetLastErrorStdStr()
-{
-	DWORD error = GetLastError();
-	if (error)
-	{
-		LPVOID lpMsgBuf;
-		DWORD bufLen = FormatMessage(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER |
-			FORMAT_MESSAGE_FROM_SYSTEM |
-			FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
-			error,
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-			(LPTSTR)&lpMsgBuf,
-			0, NULL);
-		if (bufLen)
-		{
-			LPCSTR lpMsgStr = (LPCSTR)lpMsgBuf;
-			std::string result(lpMsgStr, lpMsgStr + bufLen);
-
-			LocalFree(lpMsgBuf);
-
-			return result;
-		}
-	}
-	return std::string();
-}
-
 // static
 std::wstring File::GetSpecialFolderWide(int csidl) {
   WCHAR szPath[MAX_PATH] = {0};
@@ -74,38 +46,30 @@ bool File::IsDirectory(const std::wstring& directory) {
 }
 
 // static
-std::string File::GetTextFile(
+bool File::GetTextFile(
   const std::wstring& filename,
   std::string& ref_output,
   int limit) {
   
-	std::string status = "indetermined";
-
   DWORD dwSize = MAX_PATH;
   WCHAR path[MAX_PATH] = {NULL};
   if (0 >= GetTempPathW(dwSize, path)) {
-	  status = "Couldn't get temp path.";
-	  return status.append(utils::File::GetLastErrorStdStr());
+    return false;
   }
 
   WCHAR temp_file[MAX_PATH] = {NULL};
-  if (0 == GetTempFileNameW(path, L"IOW", 0, temp_file)) {
-    status = "Couldn't get temp file name:";
-	return status.append(utils::File::GetLastErrorStdStr());
+  if (0 == GetTempFileNameW(path, L"IO_", 0, temp_file)) {
+    return false;
   }
 
-  std::wstring temp_file_full = L"\\\\?\\";
-  temp_file_full.append(temp_file);
-
-  if (FALSE == CopyFileW(filename.c_str(), temp_file_full.c_str(), FALSE)) {
-    status = "Couldn't copy to temp file:";
-	return status.append(utils::File::GetLastErrorStdStr());
+  if (FALSE == CopyFileW(filename.c_str(), temp_file, FALSE)) {
+    return false;
   }
 
   ref_output.clear();
  
   HANDLE hFile = CreateFileW(
-    temp_file_full.c_str(),
+    temp_file,
     GENERIC_READ,          // open for reading
     FILE_SHARE_READ,       // share for reading
     NULL,                  // default security
@@ -114,10 +78,10 @@ std::string File::GetTextFile(
     NULL);                 // no attr. template
 
   if (INVALID_HANDLE_VALUE == hFile) {
-	  status = "invalid file handle:";
-	  return status.append(utils::File::GetLastErrorStdStr());
+    return false;
   }
 
+  bool status = false;
   dwSize = GetFileSize(hFile, NULL);
 
   if (dwSize > 0) {
@@ -128,26 +92,22 @@ std::string File::GetTextFile(
 
     DWORD dwBytesReadDummy = 0; // otherwise we get a crash in win7 (a.k.a. RTFM)
 
-	if (TRUE == ReadFile(
-		hFile,
-		(void*)buffer,
-		dwSize,
-		&dwBytesReadDummy,
-		nullptr)) {
-		ref_output.insert(0, buffer, dwSize);
-		status = "success";
-	}
+    status = (TRUE == ReadFile(
+      hFile, 
+      (void*)buffer, 
+      dwSize, 
+      &dwBytesReadDummy, 
+      nullptr));
+
+    if (status) {
+      ref_output.insert(0, buffer, dwSize);
+    }
 
     delete[] buffer;
   }
 
   CloseHandle(hFile);
 
-  if ((DeleteFileW(temp_file_full.c_str())) == 0) {
-	  status = "Read success, but couldn't delete temp file:";
-	  status.append(utils::File::GetLastErrorStdStr());
-  }
-  
   return status;
 }
 
@@ -161,7 +121,7 @@ bool File::GetFileTimes(
 }
 
 
-std::string File::SetFile(
+bool File::SetFile(
 	const std::wstring& filename,
 	const std::string& ref_input
 	) {
@@ -192,9 +152,8 @@ std::string File::SetFile(
 	}
 
 	DWORD dwBytesToWrite = DataBuffer.size();
-	if (dwBytesToWrite == 0) {
-		return "No data to write found.";
-	}
+	if (dwBytesToWrite == 0)
+		return false;
 
 	// prefix "\\?\" for http://msdn.microsoft.com/en-us/library/windows/desktop/aa363858%28v=vs.85%29.aspx
 	std::wstring ufname = L"\\\\?\\" + filename;
@@ -202,19 +161,18 @@ std::string File::SetFile(
 	LPCWSTR f_name = (LPCWSTR)ufname.c_str();
 	HANDLE hFile = CreateFileW(
 		f_name,
-		GENERIC_READ | GENERIC_WRITE,	// open for writing; adding READ fixes mapped network drive problems
-		FILE_SHARE_READ,				// do not share can cause troubles with antivirus, search indexing etc.
-		NULL,							// default security
-		CREATE_ALWAYS,					// overwrite existing file
-		FILE_ATTRIBUTE_NORMAL,			// normal file
-		NULL);							// no attr. template
+		GENERIC_WRITE,          // open for writing
+		0,                      // do not share
+		NULL,                   // default security
+		CREATE_ALWAYS,             // overwrite existing file
+		FILE_ATTRIBUTE_NORMAL,  // normal file
+		NULL);                  // no attr. template
 
-	std::string status = "indetermined";
 	if (INVALID_HANDLE_VALUE == hFile) {
-		status = "invalid file handle:";
-		return status.append(utils::File::GetLastErrorStdStr());
+		return false;
 	}
 
+	bool status = false;
 	DWORD dwBytesWritten = 0;
 	BOOL bErrorFlag = FALSE;
 
@@ -229,21 +187,15 @@ std::string File::SetFile(
 	{
 		if (dwBytesWritten == dwBytesToWrite)
 		{
-			status = "success";
+			status = true;
 		}
-		else
+		/*else
 		{
-			// This is an error because a synchronous write that results in
-			// success (WriteFile returns TRUE) should write all data as
-			// requested. This would not necessarily be the case for
-			// asynchronous writes.
-			status = "not all bytes could be written in synchronous operation.";
-		}
-	}
-	else
-	{
-		status = "Error writing file:";
-		status.append(utils::File::GetLastErrorStdStr());
+		// This is an error because a synchronous write that results in
+		// success (WriteFile returns TRUE) should write all data as
+		// requested. This would not necessarily be the case for
+		// asynchronous writes.
+		}*/
 	}
 
 	CloseHandle(hFile);

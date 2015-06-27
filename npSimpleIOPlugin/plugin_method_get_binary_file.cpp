@@ -63,7 +63,7 @@ void PluginMethodGetBinaryFile::Execute() {
 
   status_ = utils::File::GetTextFile(wide_filename, output_, limit_);
 
-  if (status_ != "success") {
+  if (!status_) {
     return;
   }
 
@@ -88,10 +88,9 @@ void PluginMethodGetBinaryFile::TriggerCallback() {
     output_.size(),
     args[1]);
 
-  STRINGN_TO_NPVARIANT(
-	  status_.c_str(),
-	  status_.size(),
-	  args[0]);
+  BOOLEAN_TO_NPVARIANT(
+    status_,
+    args[0]);
 
   // fire callback
   NPN_InvokeDefault(

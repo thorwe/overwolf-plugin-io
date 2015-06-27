@@ -69,9 +69,8 @@ void PluginMethodSetFile::TriggerCallback() {
 	NPVariant arg;
 	NPVariant ret_val;
 
-	STRINGN_TO_NPVARIANT(
-		status_.c_str(),
-		status_.size(),
+	INT32_TO_NPVARIANT(
+		status_,
 		arg);
 
 	// fire callback
