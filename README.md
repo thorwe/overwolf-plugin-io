@@ -22,6 +22,7 @@ plugin().FAVORITES
 plugin().FONTS
 plugin().HISTORY
 plugin().STARTMENU
+plugin().LOCALAPPDATA
 ```
 
 Functions:
