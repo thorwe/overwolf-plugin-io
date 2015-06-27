@@ -26,7 +26,7 @@ protected:
 	NPObject* callback_;
 
 	// callback
-	int status_;
+	std::string status_;
 };
 
 #endif // PLUGIN_METHODS_PLUGIN_METHOD_SET_FILE_H_

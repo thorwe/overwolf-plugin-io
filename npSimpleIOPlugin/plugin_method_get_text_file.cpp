@@ -61,14 +61,14 @@ void PluginMethodGetTextFile::Execute() {
 
   status_ = utils::File::GetTextFile(wide_filename, output_, -1);
 
-  if (status_ && widechars_) {
+  if ((status_ == "success") && widechars_) {
     try {
       std::wstring wstr((wchar_t*)output_.c_str(), output_.size()/2);
       const wchar_t* b = wstr.c_str();
       output_ = utils::Encoders::utf8_encode(wstr);
       const char* debug = output_.c_str();
     } catch(...) {
-      status_ = false;
+      status_ = "Could not utf8_encode.";
     }
   }
 }
@@ -78,9 +78,10 @@ void PluginMethodGetTextFile::TriggerCallback() {
   NPVariant args[2];
   NPVariant ret_val;
 
-  BOOLEAN_TO_NPVARIANT(
-    status_,
-    args[0]);
+  STRINGN_TO_NPVARIANT(
+	  status_.c_str(),
+	  status_.size(),
+	  args[0]);
 
   STRINGN_TO_NPVARIANT(
     output_.c_str(),
