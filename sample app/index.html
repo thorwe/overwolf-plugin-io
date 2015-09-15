@@ -3,6 +3,9 @@
     <title>IO App Tester</title>
   </head>
   <body>
+	  <script>
+		  navigator.plugins.refresh(false);
+	  </script>
 
     <embed  id="plugin" 
             type="application/x-io-plugin"
@@ -15,7 +18,6 @@
     <div id="messages"></div>
 
     <script>
-      navigator.plugins.refresh(true);
 
       function addMessage(message) {
         var obj = document.createElement("div");
