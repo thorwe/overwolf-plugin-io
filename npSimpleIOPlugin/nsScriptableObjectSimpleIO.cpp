@@ -71,6 +71,7 @@ bool nsScriptableObjectSimpleIO::Init() {
   REGISTER_GET_PROPERTY("STARTMENU", CSIDL_STARTMENU);
 
   REGISTER_GET_PROPERTY("LOCALAPPDATA", CSIDL_LOCAL_APPDATA);
+  REGISTER_GET_PROPERTY("PROFILE", CSIDL_PROFILE);
 #pragma endregion read-only properties
 
   thread_.reset(new utils::Thread());
